@@ -3,24 +3,29 @@ name: Build Android IME APK
 on:
   push:
     branches: [ main ]
-  workflow_dispatch: # 允许手动触发
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
-      
-      - name: Build APK
-        run: ./gradlew assembleDebug
-      
-      - name: Upload APK
+          cache: gradle
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build with Gradle
+        run: ./gradlew :app:assembleDebug
+
+      - name: Upload debug APK
         uses: actions/upload-artifact@v4
         with:
           name: syncclipboard-ime-debug
